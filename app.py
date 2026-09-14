@@ -28,14 +28,13 @@ OK = '#28744F'
 OK_SOFT = '#E5F2EA'
 PLOT_COLORS = ['#0E7C7B', '#C97D2C', '#4A6FA5', '#8A5FBF', '#28744F', '#AE3B2E']
 
-st.markdown(f"""
+_CSS = f"""
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
   #MainMenu {{visibility: hidden;}}
   footer {{visibility: hidden;}}
   header[data-testid="stHeader"] {{background: transparent;}}
-
   html, body, [class*="css"] {{
       font-family: 'IBM Plex Sans', system-ui, sans-serif;
   }}
@@ -48,7 +47,6 @@ st.markdown(f"""
       max-width: 1180px;
   }}
   .mono {{ font-family: 'IBM Plex Mono', monospace; font-variant-numeric: tabular-nums; }}
-
   /* header band */
   .app-header {{
       display:flex; align-items:center; gap:14px;
@@ -62,7 +60,6 @@ st.markdown(f"""
   }}
   .app-title {{ font-size:1.55rem; font-weight:700; margin:0; line-height:1.15; color:{INK}; }}
   .app-sub {{ font-size:.92rem; color:{MUTED}; margin:2px 0 0; }}
-
   /* cards */
   .card {{
       background:{SURFACE}; border:1px solid {BORDER}; border-radius:12px;
@@ -71,11 +68,9 @@ st.markdown(f"""
   }}
   .card h4 {{ margin:0 0 6px; font-size:.95rem; font-weight:700; color:{INK}; }}
   .card p {{ margin:0; font-size:.85rem; color:{MUTED}; line-height:1.5; }}
-
   .stat-label {{ font-size:.68rem; text-transform:uppercase; letter-spacing:.06em; color:{MUTED}; font-weight:600; }}
   .stat-value {{ font-family:'IBM Plex Mono',monospace; font-size:1.5rem; font-weight:600; color:{INK}; margin-top:4px; }}
   .stat-sub {{ font-size:.74rem; color:{MUTED}; font-family:'IBM Plex Mono',monospace; margin-top:2px; }}
-
   .pred-result {{
       background: linear-gradient(135deg, {ACCENT_SOFT} 0%, {SURFACE} 70%);
       border:1px solid {ACCENT}; border-radius:16px; padding:28px 30px;
@@ -83,11 +78,9 @@ st.markdown(f"""
   }}
   .pred-value {{ font-family:'IBM Plex Mono',monospace; font-size:3.2rem; font-weight:700; color:{ACCENT_DARK}; line-height:1; }}
   .pred-caption {{ font-size:.85rem; color:{MUTED}; margin-top:6px; }}
-
   .callout {{ border-radius:12px; padding:14px 18px; font-size:.87rem; line-height:1.55; }}
   .callout-warn {{ background:{WARN_SOFT}; border:1px solid {WARN}; color:{INK}; }}
   .callout-ok {{ background:{OK_SOFT}; border:1px solid {OK}; color:{INK}; }}
-
   /* tabs */
   .stTabs [data-baseweb="tab-list"] {{ gap: 6px; border-bottom: 1px solid {BORDER}; }}
   .stTabs [data-baseweb="tab"] {{
@@ -95,19 +88,20 @@ st.markdown(f"""
       font-weight:600; font-size:.92rem; padding:0 16px;
   }}
   .stTabs [aria-selected="true"] {{ color:{ACCENT_DARK} !important; border-bottom:2.5px solid {ACCENT} !important; }}
-
   /* buttons */
   .stButton>button {{
       background:{ACCENT}; color:white; border:none; border-radius:9px; font-weight:600;
       padding:.55rem 1.3rem; font-size:.92rem;
   }}
   .stButton>button:hover {{ background:{ACCENT_DARK}; color:white; }}
-
   section[data-testid="stSidebar"] {{ background:{SURFACE}; border-right:1px solid {BORDER}; }}
-
   hr {{ border-color: {BORDER}; }}
 </style>
-""", unsafe_allow_html=True)
+"""
+# Streamlit's markdown renderer treats a raw HTML block as ended by the first blank line
+# (CommonMark rule) -- any blank line inside <style> makes the rest render as literal text.
+_CSS = '\n'.join(line for line in _CSS.split('\n') if line.strip() != '')
+st.markdown(_CSS, unsafe_allow_html=True)
 
 
 # ============================================================= DATA =============================================================

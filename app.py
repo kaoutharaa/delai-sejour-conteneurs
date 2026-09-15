@@ -12,21 +12,27 @@ st.set_page_config(page_title='Délai de Séjour — Port de Casablanca', layout
                     initial_sidebar_state='collapsed')
 
 # ============================================================= THEME =============================================================
-INK = '#1C2B3A'
-MUTED = '#5C6B7A'
-BG = '#F5F8FC'
-SURFACE = '#FFFFFF'
-BORDER = '#DCE3EC'
-ACCENT = '#1F5C9E'
-ACCENT_DARK = '#153F6E'
-ACCENT_SOFT = '#E8F1FA'
-WARN = '#8A5A12'
-WARN_SOFT = '#FBF0DD'
-BAD = '#A5352B'
-BAD_SOFT = '#FBEAE8'
-OK = '#2E6B4F'
-OK_SOFT = '#E7F2EC'
-PLOT_COLORS = ['#1F5C9E', '#5C6B7A', '#4A90C4', '#153F6E', '#8AAFD1', '#2E6B4F']
+LIGHT = dict(
+    INK='#1C2B3A', MUTED='#5C6B7A', BG='#F5F8FC', SURFACE='#FFFFFF', BORDER='#DCE3EC',
+    ACCENT='#1F5C9E', ACCENT_DARK='#153F6E', ACCENT_SOFT='#E8F1FA',
+    WARN='#8A5A12', WARN_SOFT='#FBF0DD', BAD='#A5352B', BAD_SOFT='#FBEAE8', OK='#2E6B4F', OK_SOFT='#E7F2EC',
+    PLOT_COLORS=['#1F5C9E', '#5C6B7A', '#4A90C4', '#153F6E', '#8AAFD1', '#2E6B4F'],
+)
+DARK = dict(
+    INK='#E6ECF3', MUTED='#93A3B5', BG='#0F1620', SURFACE='#17202C', BORDER='#2A3A4C',
+    ACCENT='#5B9BD8', ACCENT_DARK='#8FC1EC', ACCENT_SOFT='#1B2E42',
+    WARN='#D9A441', WARN_SOFT='#2E2410', BAD='#E48A7E', BAD_SOFT='#2E1917', OK='#69C79A', OK_SOFT='#142A20',
+    PLOT_COLORS=['#5B9BD8', '#93A3B5', '#8FC1EC', '#3A6E9E', '#4A6B8A', '#69C79A'],
+)
+
+# le bouton bascule la session_state AVANT qu'on choisisse la palette, donc l'etat est deja
+# a jour des la premiere ligne du script (Streamlit restaure session_state avant de rejouer le script)
+IS_DARK = st.session_state.get('dark_mode', False)
+_T = DARK if IS_DARK else LIGHT
+INK, MUTED, BG, SURFACE, BORDER = _T['INK'], _T['MUTED'], _T['BG'], _T['SURFACE'], _T['BORDER']
+ACCENT, ACCENT_DARK, ACCENT_SOFT = _T['ACCENT'], _T['ACCENT_DARK'], _T['ACCENT_SOFT']
+WARN, WARN_SOFT, BAD, BAD_SOFT, OK, OK_SOFT = _T['WARN'], _T['WARN_SOFT'], _T['BAD'], _T['BAD_SOFT'], _T['OK'], _T['OK_SOFT']
+PLOT_COLORS = _T['PLOT_COLORS']
 
 _CSS = f"""
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -60,6 +66,8 @@ _CSS = f"""
   }}
   .app-title {{ font-size:1.55rem; font-weight:700; margin:0; line-height:1.15; color:{INK}; }}
   .app-sub {{ font-size:.92rem; color:{MUTED}; margin:2px 0 0; }}
+  .theme-toggle {{ padding-top:10px; }}
+  .theme-toggle label p {{ font-size:.78rem !important; color:{MUTED} !important; }}
   /* cards */
   .card {{
       background:{SURFACE}; border:1px solid {BORDER}; border-radius:12px;
@@ -225,15 +233,21 @@ def plotly_layout(fig, height=340, title=None):
 
 
 # ============================================================= HEADER =============================================================
-st.markdown(f"""
-<div class="app-header">
-  <div class="app-badge">PS</div>
-  <div>
-    <p class="app-title">Délai de séjour des conteneurs</p>
-    <p class="app-sub">Port de Casablanca — outil de prédiction et tableau de bord du projet</p>
-  </div>
-</div>
-""", unsafe_allow_html=True)
+head_col, toggle_col = st.columns([7, 1])
+with head_col:
+    st.markdown(f"""
+    <div class="app-header">
+      <div class="app-badge">PS</div>
+      <div>
+        <p class="app-title">Délai de séjour des conteneurs</p>
+        <p class="app-sub">Port de Casablanca — outil de prédiction et tableau de bord du projet</p>
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+with toggle_col:
+    st.markdown('<div class="theme-toggle">', unsafe_allow_html=True)
+    st.toggle('Mode sombre', value=IS_DARK, key='dark_mode')
+    st.markdown('</div>', unsafe_allow_html=True)
 
 tab_pred, tab_apercu, tab_explo, tab_limites = st.tabs(['Prédiction', 'Aperçu du projet', 'Exploration', 'Limites du modèle'])
 

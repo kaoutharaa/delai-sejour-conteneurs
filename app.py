@@ -8,25 +8,25 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
-st.set_page_config(page_title='Délai de Séjour — Port de Casablanca', page_icon='📦', layout='wide',
+st.set_page_config(page_title='Délai de Séjour — Port de Casablanca', layout='wide',
                     initial_sidebar_state='collapsed')
 
 # ============================================================= THEME =============================================================
-INK = '#152128'
-MUTED = '#5A6B70'
-BG = '#EFF3F1'
+INK = '#1C2B3A'
+MUTED = '#5C6B7A'
+BG = '#F5F8FC'
 SURFACE = '#FFFFFF'
-BORDER = '#DCE5E2'
-ACCENT = '#0E7C7B'
-ACCENT_DARK = '#075352'
-ACCENT_SOFT = '#E3F1EF'
-WARN = '#966114'
+BORDER = '#DCE3EC'
+ACCENT = '#1F5C9E'
+ACCENT_DARK = '#153F6E'
+ACCENT_SOFT = '#E8F1FA'
+WARN = '#8A5A12'
 WARN_SOFT = '#FBF0DD'
-BAD = '#AE3B2E'
-BAD_SOFT = '#FBE9E6'
-OK = '#28744F'
-OK_SOFT = '#E5F2EA'
-PLOT_COLORS = ['#0E7C7B', '#C97D2C', '#4A6FA5', '#8A5FBF', '#28744F', '#AE3B2E']
+BAD = '#A5352B'
+BAD_SOFT = '#FBEAE8'
+OK = '#2E6B4F'
+OK_SOFT = '#E7F2EC'
+PLOT_COLORS = ['#1F5C9E', '#5C6B7A', '#4A90C4', '#153F6E', '#8AAFD1', '#2E6B4F']
 
 _CSS = f"""
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,9 +54,9 @@ _CSS = f"""
       border-bottom: 1px solid {BORDER};
   }}
   .app-badge {{
-      width:46px; height:46px; border-radius:11px;
+      width:46px; height:46px; border-radius:9px;
       background: {ACCENT}; color:white; display:flex; align-items:center; justify-content:center;
-      font-size:22px; flex:none;
+      font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:15px; letter-spacing:.02em; flex:none;
   }}
   .app-title {{ font-size:1.55rem; font-weight:700; margin:0; line-height:1.15; color:{INK}; }}
   .app-sub {{ font-size:.92rem; color:{MUTED}; margin:2px 0 0; }}
@@ -227,7 +227,7 @@ def plotly_layout(fig, height=340, title=None):
 # ============================================================= HEADER =============================================================
 st.markdown(f"""
 <div class="app-header">
-  <div class="app-badge">📦</div>
+  <div class="app-badge">PS</div>
   <div>
     <p class="app-title">Délai de séjour des conteneurs</p>
     <p class="app-sub">Port de Casablanca — outil de prédiction et tableau de bord du projet</p>
@@ -235,7 +235,7 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-tab_pred, tab_apercu, tab_explo, tab_limites = st.tabs(['🔮 Prédiction', '📊 Aperçu du projet', '🔍 Exploration', '⚠️ Limites & diagnostic'])
+tab_pred, tab_apercu, tab_explo, tab_limites = st.tabs(['Prédiction', 'Aperçu du projet', 'Exploration', 'Limites du modèle'])
 
 # ============================================================= TAB PREDICTION =============================================================
 with tab_pred:
@@ -424,19 +424,6 @@ with tab_limites:
         </div>
         """, unsafe_allow_html=True)
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("""
-    <div class="card">
-    <h4>Point de vigilance méthodologique — les fuites de données sont difficiles à détecter</h4>
-    <p>Une configuration alternative annonçant un score bien plus optimiste (MAE 1-2 jours) a été analysée en détail
-    au cours du projet. La cause identifiée : une moyenne glissante par catégorie calculée sans décalage temporel
-    (<span class="mono">.shift(1)</span>) avant le <span class="mono">.rolling()</span> — la ligne « voit » alors sa
-    propre valeur cible dans sa propre feature. Reproduit avec une fenêtre extrême (n=1), ce bug fait grimper le R²
-    à 0,9993 — et il est indétectable par un simple contrôle train/test, car le score reste excellent sur validation
-    <i>et</i> sur test (contrairement à un surapprentissage classique). D'où l'importance, dans tout ce projet, du
-    décalage causal systématique documenté dans les notebooks.</p>
-    </div>
-    """, unsafe_allow_html=True)
 
 st.markdown(f"""
 <div style="margin-top:28px; padding-top:14px; border-top:1px solid {BORDER}; display:flex; justify-content:space-between;
